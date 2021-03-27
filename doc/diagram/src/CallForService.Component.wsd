@@ -1,0 +1,26 @@
+@startuml
+scale 2
+left to right direction
+skinparam packageStyle rect
+() "create" as create
+() "search" as search
+() "https" as createHttp
+() "https" as searchHttp
+[Api Gateway] as apiGateway
+[Create CSF] as createComponent
+[Search CSF] as searchComponent
+
+database "PostgreSQL" as db {
+    [tbl_call_for_service]
+} 
+
+create --> apiGateway
+apiGateway ..> createHttp : create
+createHttp -- createComponent
+createComponent --> db
+
+search --> apiGateway
+apiGateway ..> searchHttp : search
+searchHttp -- searchComponent
+searchComponent --> db
+@enduml
