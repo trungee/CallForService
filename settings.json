@@ -1,0 +1,4 @@
+{
+    "plantuml.diagramsRoot": "doc/diagram/src",
+    "plantuml.exportOutDir": "doc/diagram/out"
+}

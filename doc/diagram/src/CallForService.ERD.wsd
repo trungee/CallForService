@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+
+entity CallForService {
+    *id: uuid <<generated>>
+    --
+    *agency_id uuid NOT NULL
+    *event_id varchar(50) NOT NULL
+    event_number varchar(10)
+    event_type_code: varchar
+    event_time: timestampz
+    dispatch_time: timestampz
+    responder_id: varchar
+}
+
+entity Agency {
+    *id: uuid <<generated>>
+    --
+    name varchar NOT NULL
+}
+
+entity Responder {
+    *id uuid <<generated>>
+    --
+    *agency_id uuid NOT NULL
+    first_name varchar(50)
+    last_name varchar(50)
+}
+
+Agency ||--o{ CallForService
+Agency ||--o{ Responder
+CallForService }o--|| Responder
+@enduml
