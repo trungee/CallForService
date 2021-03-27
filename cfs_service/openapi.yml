@@ -1,0 +1,26 @@
+openapi: "3.0.0"
+info:
+  title: CFS API
+  version: 2.0.0
+paths:
+  /cfs/:
+    post:
+      operationId: listVersionsv2
+      summary: List API versions
+      responses:
+        '201':
+          description: |-
+            201 response
+          content:
+            application/json:
+              examples: 
+                CallForService:
+                  value:
+                    {
+                      "agency_id": "4f9b99eb-490a-484e-bade-15e3841dfda9",
+                      "event_id": "562c89de-f140-4482-8ef5-5f1703b286b6",
+                      "event_number": "3234019",
+                      "event_type_code": "SMO",
+                      "event_time": "2020-11-25 07:36:04.193",
+                      "responder": "OFFICER_001"
+                    }
