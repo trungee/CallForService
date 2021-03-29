@@ -4,23 +4,33 @@ left to right direction
 skinparam packageStyle rect
 () "create" as create
 () "search" as search
+() "authenticate" as authenticate
 () "https" as createHttp
 () "https" as searchHttp
 [Api Gateway] as apiGateway
-[Create CSF] as createComponent
-[Search CSF] as searchComponent
+[CSF Service] as createComponent
+[CSF Search Service] as searchComponent
+[Authentication Server] as authenticationServer
 
 database "PostgreSQL" as db {
     [tbl_call_for_service]
 } 
 
-create --> apiGateway
+database "PostgreSQL" as authenticationDb {
+    [tbl_authentication]
+} 
+
+create --> apiGateway : https
 apiGateway ..> createHttp : create
 createHttp -- createComponent
 createComponent --> db
 
-search --> apiGateway
+search --> apiGateway : https
 apiGateway ..> searchHttp : search
 searchHttp -- searchComponent
 searchComponent --> db
+
+authenticate --> apiGateway: https
+apiGateway ..> authenticationServer : authenticate
+authenticationServer --> authenticationDb
 @enduml
