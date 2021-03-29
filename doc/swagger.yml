@@ -12,33 +12,26 @@ info:
 host: "cfs.swagger.io"
 basePath: "/v1"
 tags:
-- name: "callForService"
+- name: "CallForService"
   description: "Everything about your CallForService"
   externalDocs:
     description: "Find out more"
     url: "http://swagger.io"
-- name: "store"
-  description: "Access to Petstore orders"
-- name: "user"
-  description: "Operations about user"
-  externalDocs:
-    description: "Find out more about our store"
-    url: "http://swagger.io"
 schemes:
 - "https"
-- "http"
+
 paths:
   /call-for-service:
     post:
       tags:
-      - "callForService"
+      - "CallForService"
       summary: "Add a new Call For Service to the system"
       description: ""
       operationId: "createCallForService"
       consumes:
       - "application/json"
       produces:
-      - "application/xml"
+      - "application/json"
       parameters:
       - in: "body"
         name: "body"
@@ -47,56 +40,44 @@ paths:
         schema:
           $ref: "#/definitions/CallForService"
       responses:
-        "200":
-          description: "successful operation"
+        "201":
+          description: "CREATED"
           schema:
             $ref: "#/definitions/CallForService"
         "405":
           description: "Invalid input"
-      security:
-      - user_id
-      - agency_id
+          
   /call-for-service/search:
     post:
       tags:
-      - "callForService"
+      - "CallForService"
       summary: "Search for CFS within a time range with paging and sorting order"
       description: "Returns CFSs"
       operationId: "searchByTimeRange"
       produces:
-      - "application/xml"
       - "application/json"
       parameters:
-      - name: "petId"
-        in: "path"
-        description: "ID of pet to return"
+      - in: "body"
+        name: "body"
         required: true
-        type: "integer"
-        format: "int64"
+        schema:
+          $ref: "#/definitions/SearchRequestDto"
       responses:
         "200":
-          description: "successful operation"
+          description: "response with CFSs paged & sorted result"
           schema:
-            $ref: "#/definitions/Pet"
-        "400":
-          description: "Invalid ID supplied"
-      security:
-      - api_key: []
-    
+            $ref: "#/definitions/SearchResponseDto"
+        "405":
+          description: "Invalid input"
+          
 securityDefinitions:
-  petstore_auth:
+  OAuth2:
     type: "oauth2"
-    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
-    flow: "implicit"
-    scopes:
-      write:pets: "modify pets in your account"
-      read:pets: "read your pets"
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
+    tokenUrl: "http://cfs.swagger.io/oauth/token"
+    flow: "password"
+    
 definitions:
-  searchRequestDto:
+  SearchRequestDto:
     type: "object"
     properties:
       startTime:
@@ -106,59 +87,37 @@ definitions:
         type: "string"
         format: "date-time"
       orderBy:
-        type: "integer"
-        format: "int32"
+        type: "string"
+      size:
+        type: "number"
+      pageNumber: 
+        type: "number"
       orderDirection:
         type: "string"
         description: "order direction"
         enum:
         - "ASC"
         - "DESC"
-  Category:
+  SearchResponseDto:
     type: "object"
     properties:
-      id:
-        type: "integer"
-        format: "int64"
-      name:
-        type: "string"
+      content:
+        type: array
+        items:
+          $ref: "#/definitions/CallForService"
+      totalElements:
+        type: "number"
+      totalPages:
+        type: "number"
+      size:
+        type: "number"
+      sort:
+        type: "object"
+      pageNumber:
+        type: "number"
     xml:
       name: "Category"
-  User:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      username:
-        type: "string"
-      firstName:
-        type: "string"
-      lastName:
-        type: "string"
-      email:
-        type: "string"
-      password:
-        type: "string"
-      phone:
-        type: "string"
-      userStatus:
-        type: "integer"
-        format: "int32"
-        description: "User Status"
-    xml:
-      name: "User"
-  Tag:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-        format: "int64"
-      name:
-        type: "string"
-    xml:
-      name: "Tag"
-  Pet:
+  CallForService:
     type: "object"
     required:
     - "name"
@@ -167,44 +126,22 @@ definitions:
       id:
         type: "string"
         format: "uuid"
-      category:
-        $ref: "#/definitions/Category"
-      name:
+      agency_id:
         type: "string"
-        example: "doggie"
-      photoUrls:
-        type: "array"
-        xml:
-          name: "photoUrl"
-          wrapped: true
-        items:
-          type: "string"
-      tags:
-        type: "array"
-        xml:
-          name: "tag"
-          wrapped: true
-        items:
-          $ref: "#/definitions/Tag"
-      status:
+        format: "uuid"
+      event_id:
         type: "string"
-        description: "pet status in the store"
+        format: "uuid"
+      event_number:
+        type: "string"
+      event_type_code:
+        type: "string"
         enum:
-        - "available"
-        - "pending"
-        - "sold"
-    xml:
-      name: "Pet"
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
+        - "SMO"
+        - "PENDING"
+      event_time:
         type: "string"
-      message:
-        type: "string"
+        format: "date-time"
 externalDocs:
   description: "Find out more about Swagger"
   url: "http://swagger.io"
